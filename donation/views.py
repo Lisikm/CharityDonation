@@ -1,10 +1,28 @@
 from django.shortcuts import render
 from django.views import View
+from django.core.paginator import Paginator
+
+from donation.models import Donation, Institution, User
 
 
 class LandingPageView(View):
     def get(self, request):
-        return render(request, "base.html")
+        supported_institutions = []
+        for donation in Donation.objects.all():
+            if donation.institution not in supported_institutions:
+                supported_institutions.append(donation.institution)
+        bags = sum(Donation.objects.all().values_list('quantity', flat=True))
+        pag_fundations = Paginator(Institution.objects.filter(type="fundacja"), 5)
+        fundations = pag_fundations.get_page(request.GET.get("fun_page"))
+        non_gov_orgs = Institution.objects.filter(type="organizacja pozarządowa")
+        local_collections = Institution.objects.filter(type="zbiórka lokalna")
+        return render(request, "index.html", {
+            "bags":bags,
+            "institutions":len(supported_institutions),
+            "fundations": fundations,
+            "non_gov_orgs": non_gov_orgs,
+            "local_collections": local_collections,
+        })
 
 
 class AddDonationView(View):
@@ -19,4 +37,13 @@ class LoginView(View):
 
 class RegisterView(View):
     def get(self, request):
+        return render(request, "register.html")
+
+    def post(self, request):
+        name = request.POST.get("name")
+        surname = request.POST.get("surname")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        password2 = request.POST.get("password2")
+
         return render(request, "register.html")
