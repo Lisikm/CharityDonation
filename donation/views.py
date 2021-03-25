@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator
@@ -33,6 +34,23 @@ class AddDonationView(View):
 class LoginView(View):
     def get(self, request):
         return render(request, "login.html")
+
+    def post(self, request):
+        email = request.POST["email"]
+        password = request.POST["password"]
+        if User.objects.filter(email=email):
+            user = authenticate(email=email, password=password)
+            if user:
+                login(request, user)
+            return redirect("index")
+        return redirect("register")
+
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect("index")
+
 
 
 class RegisterView(View):
