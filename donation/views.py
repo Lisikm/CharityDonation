@@ -1,9 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator
 
-from donation.models import Donation, Institution, User
+from donation.models import Donation, Institution, User, Category
 
 
 class LandingPageView(View):
@@ -26,9 +27,10 @@ class LandingPageView(View):
         })
 
 
-class AddDonationView(View):
+class AddDonationView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, "adddonation.html")
+        categories = Category.objects.all()
+        return render(request, "adddonation.html", {"categories":categories})
 
 
 class LoginView(View):
@@ -50,7 +52,6 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect("index")
-
 
 
 class RegisterView(View):
