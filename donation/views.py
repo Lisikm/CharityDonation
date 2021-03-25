@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator
 
@@ -45,5 +45,8 @@ class RegisterView(View):
         email = request.POST.get("email")
         password = request.POST.get("password")
         password2 = request.POST.get("password2")
+        if name and surname and email and password and password2 and password == password2:
+            User.objects.create_user(email=email, first_name=name, last_name=surname, password=password)
+            return redirect("login")
 
         return render(request, "register.html")
