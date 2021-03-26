@@ -223,17 +223,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
       // TODO: Validation
 
+      function step_1_categories()  {
+        let inputs = document.querySelector("form").firstElementChild.querySelectorAll("input")
+        let categories = []
+        inputs.forEach(input => {
+          if (input.checked === true) {
+            categories.push(input.parentElement.querySelector(".description").innerText)
+          }
+        })
+        return categories
+      }
+
+
       if (this.$step.innerText === "3") {
         if (document.querySelector("#no-choice")) {
           document.querySelector("#no-choice").remove()
         }
-        let inputs = this.$form.querySelector("form").firstElementChild.querySelectorAll("input")
-        let categories = []
-        inputs.forEach(input => {
-          if (input.checked === true) {
-            categories.push(input.value)
-          }
-        })
+        let categories = step_1_categories()
         let step_3 = this.$form.querySelector("form [data-step='3']")
         let divs = step_3.querySelectorAll(".form-group--checkbox")
         divs.forEach(div => {
@@ -281,6 +287,58 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$step.parentElement.hidden = this.currentStep >= 6;
 
       // TODO: get data from inputs and show them in summary
+
+      if (this.$step.innerText === "4") {
+        let summary_btn = document.querySelector("form [data-step='4']").querySelector(".next-step");
+        summary_btn.addEventListener("click", evt => {
+          let categories = step_1_categories()
+          let bags = document.querySelector("[name='bags']").value
+          let step_3_divs = document.querySelectorAll(".category")
+          let institution = ""
+          step_3_divs.forEach(div => {
+            if (div.querySelector("input").checked) {
+              institution = div.querySelector(".title").innerText
+            }
+          })
+          let address = document.querySelector("[name='address']").value
+          let city = document.querySelector("[name='city']").value
+          let postcode = document.querySelector("[name='postcode']").value
+          let phone = document.querySelector("[name='phone']").value
+          let data = document.querySelector("[name='data']").value
+          let time = document.querySelector("[name='time']").value
+          let more_info = document.querySelector("[name='more_info']").value
+          if (!more_info) {
+            more_info = "Brak uwag"
+          }
+          let summary = document.querySelector(".summary")
+          let summary_bags = "" + bags
+          if (bags < 2) {
+            summary_bags = summary_bags + " worek z: "
+          } else if (bags < 5) {
+            summary_bags = summary_bags + " worki z: "
+          } else {
+            summary_bags = summary_bags + " worków z: "
+          }
+          categories.forEach(e => {
+            if (categories.indexOf(e) === categories.length-1) {
+              summary_bags = summary_bags + e
+            } else {
+              summary_bags = summary_bags + e + ", "
+            }
+          })
+          summary.querySelector(".icon-bag").nextElementSibling.innerText = summary_bags
+          summary.querySelector(".icon-hand").nextElementSibling.innerText = "Odbiorca: " + institution
+          summary.lastElementChild.firstElementChild.querySelector("ul").innerHTML = `
+          <li>${address}</li>
+          <li>${city}</li>
+          <li>${postcode}</li>
+          <li>${phone}</li>`
+          summary.lastElementChild.lastElementChild.querySelector("ul").innerHTML = `
+          <li>${data}</li>
+          <li>${time}</li>
+          <li>${more_info}</li>`
+        })
+      }
     }
 
     /**
