@@ -223,6 +223,52 @@ document.addEventListener("DOMContentLoaded", function() {
 
       // TODO: Validation
 
+      if (this.$step.innerText === "3") {
+        if (document.querySelector("#no-choice")) {
+          document.querySelector("#no-choice").remove()
+        }
+        let inputs = this.$form.querySelector("form").firstElementChild.querySelectorAll("input")
+        let categories = []
+        inputs.forEach(input => {
+          if (input.checked === true) {
+            categories.push(input.value)
+          }
+        })
+        let step_3 = this.$form.querySelector("form [data-step='3']")
+        let divs = step_3.querySelectorAll(".form-group--checkbox")
+        divs.forEach(div => {
+          div.classList.remove("category-none")
+          div.classList.add("category")
+          let div_categories = div.querySelectorAll("div .category-none")
+          if (div_categories.length !== 0) {
+            categories.forEach(cat => {
+              let valid = false
+              for (let elem of div_categories) {
+                if (elem.innerText === cat){
+                  valid = true
+                  break
+                }
+              }
+              if (!valid) {
+                div.classList.remove("category")
+                div.classList.add("category-none")
+              }
+            })
+          }
+          else {
+            div.classList.remove("category")
+            div.classList.add("category-none")
+          }
+        })
+        let possible_choices = step_3.querySelectorAll(".category")
+        if (possible_choices.length === 0){
+          let no_choice = document.createElement("div")
+          no_choice.id = "no-choice"
+          no_choice.innerHTML = "<h4>Brak organizacji spełniających warunki.</h4>"
+          step_3.firstElementChild.appendChild(no_choice)
+        }
+      }
+
       this.slides.forEach(slide => {
         slide.classList.remove("active");
 

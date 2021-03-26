@@ -30,7 +30,8 @@ class LandingPageView(View):
 class AddDonationView(LoginRequiredMixin, View):
     def get(self, request):
         categories = Category.objects.all()
-        return render(request, "adddonation.html", {"categories":categories})
+        institutions = Institution.objects.all()
+        return render(request, "adddonation.html", {"categories":categories, "institutions":institutions})
 
 
 class LoginView(View):
