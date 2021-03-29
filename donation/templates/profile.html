@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+      <div class="slogan container container--90"
+           style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+          <h2>Imie: {{ user.first_name }}</h2>
+          <h2>Nazwisko: {{ user.last_name }}</h2>
+          <h2>Email: {{ user.email }}</h2>
+      </div>
+{% endblock %}

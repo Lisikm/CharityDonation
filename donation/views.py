@@ -98,3 +98,8 @@ class RegisterView(View):
             return redirect("login")
 
         return render(request, "register.html")
+
+
+class ProfileView(View):
+    def get(self, request):
+        return render(request, "profile.html")
