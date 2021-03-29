@@ -1,10 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-      <div class="slogan container container--90"
-           style="display: flex; justify-content: center; align-items: center; flex-direction: column">
-          <h2>Imie: {{ user.first_name }}</h2>
-          <h2>Nazwisko: {{ user.last_name }}</h2>
-          <h2>Email: {{ user.email }}</h2>
-      </div>
+    <div class="slogan container container--90"
+         style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+        <h2>Imie: {{ user.first_name }}</h2>
+        <h2>Nazwisko: {{ user.last_name }}</h2>
+        <h2>Email: {{ user.email }}</h2>
+    </div>
+    <div class="slogan container container--90"
+         style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+        <h2>Twoje dary:</h2>
+        <ul style="list-style-type: none">
+        {% if donations %}
+            {% for donation in donations %}
+                <li><h2>
+                Worki: {{ donation.quantity }} <br>
+                Organizacja: {{ donation.institution.type|title }} "{{ donation.institution|title }}" <br>
+                Kategorie darów: {% for cat in donation.categories.all %}{{ cat.name }}, {% endfor %}<br>
+                Data odbioru: {{ donation.pick_up_date }} - {{ donation.pick_up_time }}<br>
+                </h2></li>
+            {% endfor %}
+        {% else %}
+            <li><h2>Brak danych.</h2></li>
+        {% endif %}
+        </ul>
+    </div>
 {% endblock %}
