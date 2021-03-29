@@ -218,12 +218,7 @@ document.addEventListener("DOMContentLoaded", function() {
      * Update form front-end
      * Show next or previous section etc.
      */
-    updateForm() {
-      this.$step.innerText = this.currentStep;
-
-      // TODO: Validation
-
-      function step_1_categories()  {
+    step_1_categories()  {
         let inputs = document.querySelector("form").firstElementChild.querySelectorAll("input")
         let categories = []
         inputs.forEach(input => {
@@ -234,12 +229,43 @@ document.addEventListener("DOMContentLoaded", function() {
         return categories
       }
 
+    step_4_data() {
+      let address = document.querySelector("[name='address']").value
+      let city = document.querySelector("[name='city']").value
+      let postcode = document.querySelector("[name='postcode']").value
+      let phone = document.querySelector("[name='phone']").value
+      let data = document.querySelector("[name='data']").value
+      let time = document.querySelector("[name='time']").value
+      let more_info = document.querySelector("[name='more_info']").value
+      if (!more_info) {
+        more_info = "Brak uwag"
+      }
+      let form_4_data = {
+        "address":address,
+        "city":city,
+        "postcode":postcode,
+        "phone":phone,
+        "data":data,
+        "time":time,
+        "more_info":more_info,
+      }
+      return form_4_data
+    }
+
+
+    updateForm() {
+      this.$step.innerText = this.currentStep;
+
+      // TODO: Validation
+
+
+
 
       if (this.$step.innerText === "3") {
         if (document.querySelector("#no-choice")) {
           document.querySelector("#no-choice").remove()
         }
-        let categories = step_1_categories()
+        let categories = this.step_1_categories()
         let step_3 = this.$form.querySelector("form [data-step='3']")
         let divs = step_3.querySelectorAll(".form-group--checkbox")
         divs.forEach(div => {
@@ -291,7 +317,7 @@ document.addEventListener("DOMContentLoaded", function() {
       if (this.$step.innerText === "4") {
         let summary_btn = document.querySelector("form [data-step='4']").querySelector(".next-step");
         summary_btn.addEventListener("click", evt => {
-          let categories = step_1_categories()
+          let categories = this.step_1_categories()
           let bags = document.querySelector("[name='bags']").value
           let step_3_divs = document.querySelectorAll(".category")
           let institution = ""
@@ -300,16 +326,7 @@ document.addEventListener("DOMContentLoaded", function() {
               institution = div.querySelector(".title").innerText
             }
           })
-          let address = document.querySelector("[name='address']").value
-          let city = document.querySelector("[name='city']").value
-          let postcode = document.querySelector("[name='postcode']").value
-          let phone = document.querySelector("[name='phone']").value
-          let data = document.querySelector("[name='data']").value
-          let time = document.querySelector("[name='time']").value
-          let more_info = document.querySelector("[name='more_info']").value
-          if (!more_info) {
-            more_info = "Brak uwag"
-          }
+          let form_4_data = this.step_4_data()
           let summary = document.querySelector(".summary")
           let summary_bags = "" + bags
           if (bags < 2) {
@@ -329,14 +346,14 @@ document.addEventListener("DOMContentLoaded", function() {
           summary.querySelector(".icon-bag").nextElementSibling.innerText = summary_bags
           summary.querySelector(".icon-hand").nextElementSibling.innerText = "Odbiorca: " + institution
           summary.lastElementChild.firstElementChild.querySelector("ul").innerHTML = `
-          <li>${address}</li>
-          <li>${city}</li>
-          <li>${postcode}</li>
-          <li>${phone}</li>`
+          <li>${form_4_data.address}</li>
+          <li>${form_4_data.city}</li>
+          <li>${form_4_data.postcode}</li>
+          <li>${form_4_data.phone}</li>`
           summary.lastElementChild.lastElementChild.querySelector("ul").innerHTML = `
-          <li>${data}</li>
-          <li>${time}</li>
-          <li>${more_info}</li>`
+          <li>${form_4_data.data}</li>
+          <li>${form_4_data.time}</li>
+          <li>${form_4_data.more_info}</li>`
         })
       }
     }
@@ -348,8 +365,42 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     submit(e) {
       e.preventDefault();
-      this.currentStep++;
-      this.updateForm();
+      let inputs = document.querySelector("form").firstElementChild.querySelectorAll("input")
+      let categories = []
+      inputs.forEach(input => {
+        if (input.checked === true) {
+            categories.push(input.value)
+          }
+        })
+      let bags = document.querySelector("[name='bags']").value
+      let step_3_divs = document.querySelectorAll(".category")
+      let institution = ""
+      step_3_divs.forEach(div => {
+        if (div.querySelector("input").checked) {
+          institution = div.querySelector("input").value
+        }
+      })
+      let form_4_data = this.step_4_data();
+      let token = document.querySelector("[name='csrfmiddlewaretoken']").value;
+      
+      let dataForm = new FormData();
+      dataForm.append("address", form_4_data.address);
+      dataForm.append("city", form_4_data.city);
+      dataForm.append("postcode", form_4_data.postcode);
+      dataForm.append("phone", form_4_data.phone);
+      dataForm.append("data", form_4_data.data);
+      dataForm.append("time", form_4_data.time);
+      dataForm.append("more_info", form_4_data.more_info);
+      dataForm.append("categories", categories);
+      dataForm.append("bags", bags);
+      dataForm.append("institution", institution);
+      dataForm.append('csrfmiddlewaretoken', token);
+      fetch('http://127.0.0.1:8000/add_donation/', {
+        method: 'post',
+        body: dataForm,
+    })
+          .then( resp => resp.text())
+          .then( resp => document.body.innerHTML = resp)
     }
   }
   const form = document.querySelector(".form--steps");
