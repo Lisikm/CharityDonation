@@ -1833,3 +1833,10 @@ footer .bottom-line--icons a img {
 .category {
   display: block;
 }
+.donations {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 10px 0;
+}

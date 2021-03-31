@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="{% static "css/style.css" %}" />
   </head>
   <body>
-    <header class="header--main-page">
+  {% block header %}
+  {% endblock %}
       <nav class="container container--70">
         <ul class="nav--actions">
             {% if user.is_authenticated %}
@@ -40,7 +41,7 @@
         </ul>
       </nav>
 
-    {% block header %}
+    {% block header_content %}
     {% endblock %}
     </header>
 {% block content %}

@@ -1,28 +1,51 @@
 {% extends "base.html" %}
 {% load static %}
-{% block content %}
-    <div class="slogan container container--90"
-         style="display: flex; justify-content: center; align-items: center; flex-direction: column">
-        <h2>Imie: {{ user.first_name }}</h2>
-        <h2>Nazwisko: {{ user.last_name }}</h2>
-        <h2>Email: {{ user.email }}</h2>
+{% block header %}
+    <header class="header--main-page">
+{% endblock %}
+{%  block header_content %}
+    <div class="slogan container container--90">
+        <div class="slogan--item">
+            <h2>Imie: {{ user.first_name }}</h2>
+            <h2>Nazwisko: {{ user.last_name }}</h2>
+            <h2>Email: {{ user.email }}</h2>
+        </div>
     </div>
-    <div class="slogan container container--90"
-         style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+{% endblock %}
+{% block content %}
+
+    <div class="slogan container container--90">
         <h2>Twoje dary:</h2>
-        <ul style="list-style-type: none">
+        <div class="donations">
         {% if donations %}
             {% for donation in donations %}
-                <li><h2>
+                <form method="post">
+                {% csrf_token %}
+                <div class="donations">
+                {% if donation.is_taken %}
+                    <h2 style="color: #737373">
+                    {% else %}
+                    <h2>
+                    {% endif %}
                 Worki: {{ donation.quantity }} <br>
                 Organizacja: {{ donation.institution.type|title }} "{{ donation.institution|title }}" <br>
                 Kategorie darów: {% for cat in donation.categories.all %}{{ cat.name }}, {% endfor %}<br>
                 Data odbioru: {{ donation.pick_up_date }} - {{ donation.pick_up_time }}<br>
-                </h2></li>
+                    {% if not donation.is_taken %}
+                        <input type="hidden" name="is_taken" value="True">
+                        <button class="btn btn--without-border" type="submit" name="donations" value="{{ donation.id }}">Ustaw jako odebrany.</button>
+                    {% else %}
+                        <input type="hidden" name="is_taken" value="False">
+                        <button class="btn btn--without-border" type="submit" name="donations" value="{{ donation.id }}">Ustaw jako nieodebrany.</button>
+                    {% endif %}
+                </h2>
+                </div>
+                </form>
             {% endfor %}
+
         {% else %}
-            <li><h2>Brak danych.</h2></li>
+            <div><h2>Brak danych.</h2></div>
         {% endif %}
-        </ul>
+        </div>
     </div>
 {% endblock %}

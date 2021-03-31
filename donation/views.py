@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator
 
-from donation.forms import DonationForm
+from donation.forms import DonationForm, TakenForm
 from donation.models import Donation, Institution, User, Category
 
 
@@ -110,5 +110,15 @@ class RegisterView(View):
 
 class ProfileView(View):
     def get(self, request):
+        return render(request, "profile.html", {"donations":Donation.objects.filter(user=request.user)})
+
+    def post(self, request):
+        form = TakenForm(request.POST, user=request.user)
         donations = Donation.objects.filter(user=request.user)
-        return render(request, "profile.html", {"donations":donations})
+        if form.is_valid():
+            donation = form.cleaned_data["donations"]
+            donation.is_taken = form.cleaned_data["is_taken"]
+            donation.save()
+            return redirect("profile")
+        else:
+            return redirect("profile")
