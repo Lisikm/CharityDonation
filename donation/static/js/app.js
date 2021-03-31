@@ -232,22 +232,22 @@ document.addEventListener("DOMContentLoaded", function() {
     step_4_data() {
       let address = document.querySelector("[name='address']").value
       let city = document.querySelector("[name='city']").value
-      let postcode = document.querySelector("[name='postcode']").value
-      let phone = document.querySelector("[name='phone']").value
-      let data = document.querySelector("[name='data']").value
-      let time = document.querySelector("[name='time']").value
-      let more_info = document.querySelector("[name='more_info']").value
-      if (!more_info) {
-        more_info = "Brak uwag"
+      let zip_code = document.querySelector("[name='zip_code']").value
+      let phone_number = document.querySelector("[name='phone_number']").value
+      let pick_up_date = document.querySelector("[name='pick_up_date']").value
+      let pick_up_time = document.querySelector("[name='pick_up_time']").value
+      let pick_up_comment = document.querySelector("[name='pick_up_comment']").value
+      if (!pick_up_comment) {
+        pick_up_comment = "Brak uwag"
       }
       let form_4_data = {
         "address":address,
         "city":city,
-        "postcode":postcode,
-        "phone":phone,
-        "data":data,
-        "time":time,
-        "more_info":more_info,
+        "zip_code":zip_code,
+        "phone_number":phone_number,
+        "pick_up_date":pick_up_date,
+        "pick_up_time":pick_up_time,
+        "pick_up_comment":pick_up_comment,
       }
       return form_4_data
     }
@@ -318,7 +318,7 @@ document.addEventListener("DOMContentLoaded", function() {
         let summary_btn = document.querySelector("form [data-step='4']").querySelector(".next-step");
         summary_btn.addEventListener("click", evt => {
           let categories = this.step_1_categories()
-          let bags = document.querySelector("[name='bags']").value
+          let quantity = document.querySelector("[name='quantity']").value
           let step_3_divs = document.querySelectorAll(".category")
           let institution = ""
           step_3_divs.forEach(div => {
@@ -328,10 +328,10 @@ document.addEventListener("DOMContentLoaded", function() {
           })
           let form_4_data = this.step_4_data()
           let summary = document.querySelector(".summary")
-          let summary_bags = "" + bags
-          if (bags < 2) {
+          let summary_bags = "" + quantity
+          if (quantity < 2) {
             summary_bags = summary_bags + " worek z: "
-          } else if (bags < 5) {
+          } else if (quantity < 5) {
             summary_bags = summary_bags + " worki z: "
           } else {
             summary_bags = summary_bags + " worków z: "
@@ -348,12 +348,12 @@ document.addEventListener("DOMContentLoaded", function() {
           summary.lastElementChild.firstElementChild.querySelector("ul").innerHTML = `
           <li>${form_4_data.address}</li>
           <li>${form_4_data.city}</li>
-          <li>${form_4_data.postcode}</li>
-          <li>${form_4_data.phone}</li>`
+          <li>${form_4_data.zip_code}</li>
+          <li>${form_4_data.phone_number}</li>`
           summary.lastElementChild.lastElementChild.querySelector("ul").innerHTML = `
-          <li>${form_4_data.data}</li>
-          <li>${form_4_data.time}</li>
-          <li>${form_4_data.more_info}</li>`
+          <li>${form_4_data.pick_up_date}</li>
+          <li>${form_4_data.pick_up_time}</li>
+          <li>${form_4_data.pick_up_comment}</li>`
         })
       }
     }
@@ -372,7 +372,7 @@ document.addEventListener("DOMContentLoaded", function() {
             categories.push(input.value)
           }
         })
-      let bags = document.querySelector("[name='bags']").value
+      let quantity = document.querySelector("[name='quantity']").value
       let step_3_divs = document.querySelectorAll(".category")
       let institution = ""
       step_3_divs.forEach(div => {
@@ -386,13 +386,15 @@ document.addEventListener("DOMContentLoaded", function() {
       let dataForm = new FormData();
       dataForm.append("address", form_4_data.address);
       dataForm.append("city", form_4_data.city);
-      dataForm.append("postcode", form_4_data.postcode);
-      dataForm.append("phone", form_4_data.phone);
-      dataForm.append("data", form_4_data.data);
-      dataForm.append("time", form_4_data.time);
-      dataForm.append("more_info", form_4_data.more_info);
-      dataForm.append("categories", categories);
-      dataForm.append("bags", bags);
+      dataForm.append("zip_code", form_4_data.zip_code);
+      dataForm.append("phone_number", form_4_data.phone_number);
+      dataForm.append("pick_up_date", form_4_data.pick_up_date);
+      dataForm.append("pick_up_time", form_4_data.pick_up_time);
+      dataForm.append("pick_up_comment", form_4_data.pick_up_comment);
+      categories.forEach(category => {
+        dataForm.append("categories", category)
+      })
+      dataForm.append("quantity", quantity);
       dataForm.append("institution", institution);
       dataForm.append('csrfmiddlewaretoken', token);
       fetch('http://127.0.0.1:8000/add_donation/', {

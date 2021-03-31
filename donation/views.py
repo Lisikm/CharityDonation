@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator
 
+from donation.forms import DonationForm
 from donation.models import Donation, Institution, User, Category
 
 
@@ -34,32 +35,27 @@ class AddDonationView(LoginRequiredMixin, View):
         return render(request, "adddonation.html", {"categories":categories, "institutions":institutions})
 
     def post(self, request):
-        address = request.POST["address"]
-        city = request.POST["city"]
-        postcode = request.POST["postcode"]
-        phone = int(request.POST["phone"])
-        data = request.POST["data"]
-        time = request.POST["time"]
-        more_info = request.POST["more_info"]
-        categories = request.POST["categories"]
-        bags = request.POST["bags"]
-        institution = int(request.POST["institution"])
-        donation = Donation.objects.create(
-            quantity=bags,
-            institution_id=institution,
-            address=address,
-            phone_number=phone,
-            city=city,
-            zip_code=postcode,
-            pick_up_date=data,
-            pick_up_time=time,
-            pick_up_comment=more_info,
-            user=request.user
-        )
-        categories = categories.split(",")
-        for category in categories:
-            donation.categories.add(Category.objects.get(pk=int(category)))
-        return render(request, "form-confirmation.html")
+        form = DonationForm(request.POST)
+        if form.is_valid():
+            donation = Donation.objects.create(
+                    quantity=form.cleaned_data['quantity'],
+                    institution=form.cleaned_data['institution'],
+                    address=form.cleaned_data['address'],
+                    phone_number=form.cleaned_data['phone_number'],
+                    city=form.cleaned_data['city'],
+                    zip_code=form.cleaned_data['zip_code'],
+                    pick_up_date=form.cleaned_data['pick_up_date'],
+                    pick_up_time=form.cleaned_data['pick_up_time'],
+                    pick_up_comment=form.cleaned_data['pick_up_comment'],
+                    user=request.user
+                )
+            categories = form.cleaned_data["categories"]
+            donation.categories.set(categories)
+            return render(request, "form-confirmation.html")
+        else:
+            categories = Category.objects.all()
+            institutions = Institution.objects.all()
+            return render(request, "adddonation.html", {"categories": categories, "institutions": institutions})
 
 
 class LoginView(View):
