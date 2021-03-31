@@ -355,6 +355,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <li>${form_4_data.pick_up_time}</li>
           <li>${form_4_data.pick_up_comment}</li>`
         })
+        document.querySelector("#error").innerText = ""
       }
     }
 
@@ -401,8 +402,17 @@ document.addEventListener("DOMContentLoaded", function() {
         method: 'post',
         body: dataForm,
     })
-          .then( resp => resp.text())
-          .then( resp => document.body.innerHTML = resp)
+          .then( resp => resp.json())
+          .then( data => {
+            if (data.site) {
+              window.location.replace(data.site)
+            } else {
+              document.querySelector("#error").innerText = data.error;
+            }
+          })
+          .catch( error => {
+              document.querySelector("#error").innerText = "Wprowadzono błędne dane";
+          })
     }
   }
   const form = document.querySelector(".form--steps");

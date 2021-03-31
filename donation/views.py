@@ -1,5 +1,8 @@
+from django.urls import reverse
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator
@@ -51,11 +54,20 @@ class AddDonationView(LoginRequiredMixin, View):
                 )
             categories = form.cleaned_data["categories"]
             donation.categories.set(categories)
-            return render(request, "form-confirmation.html")
+            response_data = {
+                'site': reverse("form-confirmation")
+            }
+            return JsonResponse(response_data)
         else:
-            categories = Category.objects.all()
-            institutions = Institution.objects.all()
-            return render(request, "adddonation.html", {"categories": categories, "institutions": institutions})
+            response_data = {
+                'error': "Wprowadzono błędne dane"
+            }
+            return JsonResponse(response_data)
+
+
+class FormConfView(View):
+    def get(self, request):
+        return render(request, 'form-confirmation.html')
 
 
 class LoginView(View):
