@@ -114,7 +114,6 @@ class ProfileView(View):
 
     def post(self, request):
         form = TakenForm(request.POST, user=request.user)
-        donations = Donation.objects.filter(user=request.user)
         if form.is_valid():
             donation = form.cleaned_data["donations"]
             donation.is_taken = form.cleaned_data["is_taken"]

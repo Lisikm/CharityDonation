@@ -12,7 +12,7 @@ class DonationForm(forms.ModelForm):
 
 class TakenForm(forms.Form):
     donations = forms.ModelChoiceField(queryset=Donation.objects.none())
-    is_taken = forms.BooleanField()
+    is_taken = forms.BooleanField(required=False)
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
