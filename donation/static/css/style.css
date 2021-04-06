@@ -1840,3 +1840,22 @@ footer .bottom-line--icons a img {
   flex-direction: column;
   margin: 10px 0;
 }
+.pass_form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 10px 0;
+}
+.pass_form p {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.pass_form label {
+  font-size: x-large;
+}
+.pass_form input {
+  font-size: x-large;
+}

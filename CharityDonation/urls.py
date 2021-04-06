@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 
 from donation.views import LandingPageView, AddDonationView, LoginView, RegisterView, LogoutView, ProfileView, \
-    FormConfView
+    FormConfView, EditUserPassView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +27,6 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name="logout"),
     path('register/', RegisterView.as_view(), name="register"),
     path('user/profile/', ProfileView.as_view(), name="profile"),
+    path('user/profile/settings/', EditUserPassView.as_view(), name="ustawienia"),
     path('form_confirmation', FormConfView.as_view(), name="form-confirmation"),
 ]

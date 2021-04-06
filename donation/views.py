@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator
 
-from donation.forms import DonationForm, TakenForm
+from donation.forms import DonationForm, TakenForm, PassForm
 from donation.models import Donation, Institution, User, Category
 
 
@@ -81,8 +81,9 @@ class LoginView(View):
             user = authenticate(email=email, password=password)
             if user:
                 login(request, user)
-            return redirect("index")
-        return redirect("register")
+                return redirect("index")
+            return redirect("login")
+        return redirect("login")
 
 
 class LogoutView(View):
@@ -121,3 +122,17 @@ class ProfileView(View):
             return redirect("profile")
         else:
             return redirect("profile")
+
+
+class EditUserPassView(View):
+    def get(self, request):
+        form = PassForm(user=request.user)
+        return render(request, "changepass.html", {"form":form})
+
+    def post(self, request):
+        form = PassForm(request.user, request.POST)
+        if form.is_valid():
+            request.user.set_password(form.cleaned_data["new_password_1"])
+            request.user.save()
+            return render(request, "changepass.html", {"success": "Hasło zostało zmienione"})
+        return render(request, "changepass.html", {"form": form})
