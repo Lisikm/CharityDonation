@@ -1,7 +1,8 @@
 from django import forms
+from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 
-from donation.models import Donation
+from donation.models import Donation, User
 
 
 class DonationForm(forms.ModelForm):
@@ -37,3 +38,29 @@ class PassForm(forms.Form):
                 raise ValidationError("Nowe hasło nie jest identyczne")
         else:
             raise ValidationError("Aktualne hasło nieprawidłowe")
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField()
+    password = forms.CharField(max_length=128)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if not User.objects.filter(email=cleaned_data["email"]):
+            raise ValidationError("Brak użytkownika o takim adresie email")
+        user = authenticate(email=cleaned_data["email"], password=cleaned_data["password"])
+        if not user:
+            raise ValidationError("Nieprawidłowe hasło")
+
+
+class RegisterForm(forms.Form):
+    name = forms.CharField(max_length=128)
+    surname = forms.CharField(max_length=128)
+    email = forms.EmailField()
+    password = forms.CharField(max_length=128)
+    password2 = forms.CharField(max_length=128)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data["password"] != cleaned_data["password2"]:
+            raise ValidationError("Hasła nie są takie same")

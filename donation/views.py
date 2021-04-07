@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import Paginator
 
-from donation.forms import DonationForm, TakenForm, PassForm
+from donation.forms import DonationForm, TakenForm, PassForm, RegisterForm, LoginForm
 from donation.models import Donation, Institution, User, Category
 
 
@@ -77,14 +77,13 @@ class LoginView(View):
         return render(request, "login.html")
 
     def post(self, request):
-        email = request.POST["email"]
-        password = request.POST["password"]
-        if User.objects.filter(email=email):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
             user = authenticate(email=email, password=password)
-            if user:
-                login(request, user)
-                return redirect("index")
-            return redirect("login")
+            login(request, user)
+            return redirect("index")
         return redirect("login")
 
 
@@ -99,15 +98,14 @@ class RegisterView(View):
         return render(request, "register.html")
 
     def post(self, request):
-        name = request.POST.get("name")
-        surname = request.POST.get("surname")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        password2 = request.POST.get("password2")
-        if name and surname and email and password and password2 and password == password2:
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            surname = form.cleaned_data["surname"]
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
             User.objects.create_user(email=email, first_name=name, last_name=surname, password=password)
             return redirect("login")
-
         return render(request, "register.html")
 
 
@@ -136,5 +134,5 @@ class EditUserPassView(View):
         if form.is_valid():
             request.user.set_password(form.cleaned_data["new_password_1"])
             request.user.save()
-            return render(request, "changepass.html", {"success": "Hasło zostało zmienione"})
+            return redirect("login")
         return render(request, "changepass.html", {"form": form})

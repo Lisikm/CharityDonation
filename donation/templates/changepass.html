@@ -6,7 +6,6 @@
 {%  block header_content %}
     <div class="slogan container container--90">
         <div class="slogan--item">
-            {% if form %}
                 <div>
                 <form class="pass_form" method="post">
                     {% csrf_token %}
@@ -14,9 +13,6 @@
                     <input class="btn btn--without-border" type="submit" value="Send" >
                 </form>
                 </div>
-            {% else %}
-                {{ success }}
-            {% endif %}
         </div>
     </div>
 {% endblock %}
