@@ -104,7 +104,7 @@
         </ul>
       {% endfor %}
         <ul class="help--slides-pagination">
-            {% for page in fundations_pages.1.paginator.page_range %}
+            {% for page in fundations_pages.0.paginator.page_range %}
                 {% if page == 1 %}
                     <li><a href="#" class="btn btn--small btn--without-border active" data-page="{{ page }}">{{ page }}</a></li>
                 {% else %}
@@ -122,8 +122,13 @@
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Hic officiis mollitia dolor, neque aspernatur accusamus debitis. Ducimus, officia. Quia, sunt illum! Non iste placeat ab ipsum alias
           quos suscipit corporis!
         </p>
-        <ul class="help--slides-items">
-          {% for org in non_gov_orgs %}
+        {% for page in non_gov_orgs_pages  %}
+            {% if page.number == 1 %}
+                <ul class="help--slides-items" data-page="{{ page.number }}">
+            {% else %}
+                <ul class="help--slides-items non_vis" data-page="{{ page.number }}">
+            {% endif %}
+            {% for org in page.object_list %}
           <li>
             <div class="col">
               <div class="title">{{ org.name }}</div>
@@ -138,23 +143,28 @@
           </li>
             {% endfor %}
         </ul>
-
-        <!-- Pagination
+      {% endfor %}
         <ul class="help--slides-pagination">
-          <li><a href="#" class="btn btn--small btn--without-border active" data-page="1">1</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="2">2</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="3">3</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="4">4</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="5">5</a></li>
+          {% for page in non_gov_orgs_pages.0.paginator.page_range %}
+                {% if page == 1 %}
+                    <li><a href="#" class="btn btn--small btn--without-border active" data-page="{{ page }}">{{ page }}</a></li>
+                {% else %}
+                    <li><a href="#" class="btn btn--small btn--without-border" data-page="{{ page }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
         </ul>
-        -->
       </div>
 
       <!-- SLIDE 3 -->
       <div class="help--slides" data-id="3">
         <p>Lorem ipsum dolor sit amet, his ocurreret persequeris ea, ad utinam laudem duo. Verterem adipisci partiendo eos ne, ea his reque quaeque recteque, ne quo lobortis intellegam.</p>
-        <ul class="help--slides-items">
-          {% for collection in local_collections %}
+        {% for page in local_collections_pages  %}
+            {% if page.number == 1 %}
+                <ul class="help--slides-items" data-page="{{ page.number }}">
+            {% else %}
+                <ul class="help--slides-items non_vis" data-page="{{ page.number }}">
+            {% endif %}
+            {% for collection in page.object_list %}
           <li>
             <div class="col">
               <div class="title">{{ collection.name }}</div>
@@ -169,13 +179,16 @@
           </li>
             {% endfor %}
         </ul>
-
-        <!-- Pagination
+      {% endfor %}
         <ul class="help--slides-pagination">
-          <li><a href="#" class="btn btn--small btn--without-border active" data-page="1">1</a></li>
-          <li><a href="#" class="btn btn--small btn--without-border" data-page="2">2</a></li>
+            {% for page in local_collections_pages.0.paginator.page_range %}
+                {% if page == 1 %}
+                    <li><a href="#" class="btn btn--small btn--without-border active" data-page="{{ page }}">{{ page }}</a></li>
+                {% else %}
+                    <li><a href="#" class="btn btn--small btn--without-border" data-page="{{ page }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
         </ul>
-        -->
       </div>
     </section>
 
