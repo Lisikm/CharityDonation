@@ -18,16 +18,18 @@ class LandingPageView(View):
             if donation.institution not in supported_institutions:
                 supported_institutions.append(donation.institution)
         bags = sum(Donation.objects.all().values_list('quantity', flat=True))
-        pag_fundations = Paginator(Institution.objects.filter(type="fundacja"), 5)
-        fundations = pag_fundations.get_page(request.GET.get("fun_page"))
-        non_gov_orgs = Institution.objects.filter(type="organizacja pozarządowa")
-        local_collections = Institution.objects.filter(type="zbiórka lokalna")
+        fundations_paginator = Paginator(Institution.objects.filter(type="fundacja"), 5)
+        fundations_pages = [fundations_paginator.page(x) for x in fundations_paginator.page_range]
+        non_gov_orgs_paginator = Paginator(Institution.objects.filter(type="organizacja pozarządowa"), 5)
+        non_gov_orgs_pages = [non_gov_orgs_paginator.page(x) for x in non_gov_orgs_paginator.page_range]
+        local_collections_paginator = Paginator(Institution.objects.filter(type="zbiórka lokalna"), 5)
+        local_collections_pages = [local_collections_paginator.page(x) for x in local_collections_paginator.page_range]
         return render(request, "index.html", {
             "bags":bags,
             "institutions":len(supported_institutions),
-            "fundations": fundations,
-            "non_gov_orgs": non_gov_orgs,
-            "local_collections": local_collections,
+            "fundations_pages": fundations_pages,
+            "non_gov_orgs_pages": non_gov_orgs_pages,
+            "local_collections_pages": local_collections_pages,
         })
 
 

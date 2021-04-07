@@ -81,9 +81,13 @@
       <!-- SLIDE 1 -->
       <div class="help--slides active" data-id="1">
         <p>W naszej bazie znajdziesz listę zweryfikowanych Fundacji, z którymi współpracujemy. Możesz sprawdzić czym się zajmują, komu pomagają i czego potrzebują.</p>
-
-        <ul class="help--slides-items">
-            {% for fundation in fundations %}
+        {% for page in fundations_pages  %}
+            {% if page.number == 1 %}
+                <ul class="help--slides-items" data-page="{{ page.number }}">
+            {% else %}
+                <ul class="help--slides-items non_vis" data-page="{{ page.number }}">
+            {% endif %}
+            {% for fundation in page.object_list %}
           <li>
             <div class="col">
               <div class="title">Fundacja "{{ fundation.name }}"</div>
@@ -98,9 +102,14 @@
           </li>
             {% endfor %}
         </ul>
+      {% endfor %}
         <ul class="help--slides-pagination">
-            {% for page in fundations.paginator.page_range %}
-                <li><a href="?fun_page={{ page }}#help" class="btn btn--small btn--without-border" data-page="{{ page }}">{{ page }}</a></li>
+            {% for page in fundations_pages.1.paginator.page_range %}
+                {% if page == 1 %}
+                    <li><a href="#" class="btn btn--small btn--without-border active" data-page="{{ page }}">{{ page }}</a></li>
+                {% else %}
+                    <li><a href="#" class="btn btn--small btn--without-border" data-page="{{ page }}">{{ page }}</a></li>
+                {% endif %}
             {% endfor %}
         </ul>
 

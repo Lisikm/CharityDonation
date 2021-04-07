@@ -62,8 +62,19 @@ document.addEventListener("DOMContentLoaded", function() {
     changePage(e) {
       e.preventDefault();
       const page = e.target.dataset.page;
-
-      console.log(page);
+      const page_btns = e.target.parentElement.parentElement.querySelectorAll(".btn")
+      const pages = e.target.parentElement.parentElement.parentElement.querySelectorAll(".help--slides-items");
+      pages.forEach(elem => {
+        if (elem.dataset.page === page) {
+          elem.classList.remove("non_vis")
+        } else {
+          elem.classList.add("non_vis")
+        }
+      })
+      page_btns.forEach(btn => {
+        btn.classList.remove("active")
+      })
+      e.target.classList.add("active")
     }
   }
   const helpSection = document.querySelector(".help");

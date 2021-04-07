@@ -1859,3 +1859,6 @@ footer .bottom-line--icons a img {
 .pass_form input {
   font-size: x-large;
 }
+.non_vis {
+  display: none;
+}
